@@ -107,5 +107,5 @@ python dashboard.py
 ```
 
 ## Autor
-**Eider** — Científico de Datos y Estadístico  
+**Eider** — Científico de Datos  
 [![Fiverr](https://img.shields.io/badge/Fiverr-Contrátame-1DBF73?logo=fiverr)](https://www.fiverr.com/eiderdatadriven)
