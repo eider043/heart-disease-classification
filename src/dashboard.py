@@ -3,6 +3,7 @@ Dashboard interactivo — Deteccion de Enfermedades Cardiacas
 Autor: Eider
 """
 
+import os
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -15,8 +16,10 @@ import dash_bootstrap_components as dbc
 from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # ── Cargar datos y modelos ──────────────────────────────────────────
-df = pd.read_csv("../data/heart_disease.csv")
+df = pd.read_csv(os.path.join(BASE_DIR, "data", "heart_disease.csv"))
 
 MODEL_NAMES = [
     "logistic_regression", "svm", "decision_tree",
@@ -34,11 +37,13 @@ DISPLAY_NAMES = {
 models = {}
 for m in MODEL_NAMES:
     try:
-        models[DISPLAY_NAMES[m]] = joblib.load(f"../models/{m}.pkl")
+        models[DISPLAY_NAMES[m]] = joblib.load(
+            os.path.join(BASE_DIR, "models", f"{m}.pkl")
+        )
     except FileNotFoundError:
         pass
 
-metrics_df = pd.read_csv("../outputs/model_metrics.csv")
+metrics_df = pd.read_csv(os.path.join(BASE_DIR, "outputs", "model_metrics.csv"))
 
 scaler = StandardScaler()
 X = df.drop(columns=["target"])
@@ -53,7 +58,6 @@ app.title = "Heart Disease Classification Dashboard"
 CARD_STYLE = {"border": "1px solid #444", "borderRadius": "8px", "padding": "15px",
               "backgroundColor": "#2d2d2d", "marginBottom": "15px"}
 
-# KPIs
 total = len(df)
 positivos = df["target"].sum()
 prevalencia = positivos / total
@@ -61,7 +65,6 @@ best_auc = metrics_df["AUC"].max()
 best_model_name = metrics_df.loc[metrics_df["AUC"].idxmax(), "Model"]
 
 app.layout = dbc.Container([
-    # Header
     dbc.Row([
         dbc.Col([
             html.H1("Heart Disease Classification Dashboard",
@@ -73,7 +76,6 @@ app.layout = dbc.Container([
 
     html.Hr(style={"borderColor": "#444"}),
 
-    # KPIs
     dbc.Row([
         dbc.Col(dbc.Card([
             html.H4(f"{total}", style={"color": "#3498db", "fontWeight": "bold", "fontSize": "2rem"}),
@@ -93,7 +95,6 @@ app.layout = dbc.Container([
         ], body=True, style=CARD_STYLE), width=3),
     ]),
 
-    # Graficas principales
     dbc.Row([
         dbc.Col([
             html.H5("Comparacion de Modelos", style={"color": "#fff"}),
@@ -105,7 +106,6 @@ app.layout = dbc.Container([
         ], width=6),
     ]),
 
-    # Selector de metrica y modelo
     dbc.Row([
         dbc.Col([
             html.Label("Metrica de comparacion:", style={"color": "#aaa"}),
@@ -132,7 +132,6 @@ app.layout = dbc.Container([
         ], width=6),
     ], style={"marginBottom": "15px"}),
 
-    # Matriz de confusion y distribucion
     dbc.Row([
         dbc.Col([
             html.H5("Matriz de Confusion", style={"color": "#fff"}),
@@ -150,7 +149,6 @@ app.layout = dbc.Container([
         ], width=6),
     ]),
 
-    # Importancia de variables
     dbc.Row([
         dbc.Col([
             html.H5("Importancia de Variables — Random Forest", style={"color": "#fff"}),
@@ -158,7 +156,6 @@ app.layout = dbc.Container([
         ], width=12)
     ]),
 
-    # Tabla de metricas
     dbc.Row([
         dbc.Col([
             html.H5("Tabla de Resultados", style={"color": "#fff"}),
