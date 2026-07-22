@@ -106,6 +106,10 @@ python main.py
 python dashboard.py
 ```
 
+## Dash
+
+Link: https://heart-disease-classification-6r1g.onrender.com/
+
 ## Autor
 **Eider** — Científico de Datos  
 [![Fiverr](https://img.shields.io/badge/Fiverr-Contrátame-1DBF73?logo=fiverr)](https://www.fiverr.com/eiderdatadriven)
